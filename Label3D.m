@@ -429,7 +429,7 @@ classdef Label3D < Animator
             end
             
             % Reshape to dannce specifications
-            % Only take the labeled frames
+            % Only take the labeled frames      
             labeledFrames = ~any(obj.status ~= obj.isLabeled, 2);
             labeledFrames = repelem(labeledFrames,1,3,1);
             pts3D = obj.points3D;
@@ -1066,7 +1066,8 @@ classdef Label3D < Animator
             obj.update()
         end
         
-        function saveState(obj)
+        % YIWEN
+        function saveState(obj, acceptInit)
             % saveState - Save data for each camera to the savePath
             %   Saves one .mat file for each camera with the format string
             %   path = sprintf('%s%sCamera_%d.mat', obj.savePath, datestr(now,'yyyy_mm_dd_HH_MM_SS'), nCam);
@@ -1089,8 +1090,12 @@ classdef Label3D < Animator
             imageSize = obj.ImageSize;
             cameraPoses = obj.cameraPoses;
             
-            % Reshape to dannce specifications
+            
             % Only take the labeled frames
+            % Reshape to dannce specifications
+            if ~isempty(acceptInit)
+                obj.isLabeled = 1; % Consider all as labeled and accept
+            end  
             labeledFrames = ~any(obj.status ~= obj.isLabeled, 2);
             labeledFrames = repelem(labeledFrames,1,3,1);
             pts3D = obj.points3D;
@@ -1180,21 +1185,25 @@ classdef Label3D < Animator
             obj.update()
         end
         
+        % YIWEN
         function exportDannce(obj, varargin)
-            %exportDannce - Export data to dannce format
+            % exportDannce - Export data to dannce format
             %
             % Optional inputs:
             % basePath - Path to Dannce project folder
             % file - Path to .mat Label3D save file (with or without videos)
             % saveFolder - Folder in which to save dannce.mat file
             % cameraNames - cell array of camera names (in order)
-            %   Default: {'Camera1', 'Camera2', etc.}
+            %         Default: {'Camera1', 'Camera2', etc.}
             % framesToLabel - Vector of frame numbers for each video frame.
             % Syntax: labelGui.exportDannce
             %         labelGui.exportDannce('basePath', path)
             %         labelGui.exportDannce('cameraNames', cameraNames)
             %         labelGui.exportDannce('framesToLabel', framesToLabel)
             %         labelGui.exportDannce('saveFolder', saveFolder)
+            % 
+            % To accept all initialized 3d points:
+            %         labelGui.exportDannce('acceptInit', acceptInit)
             defaultBasePath = '';
             defaultCameraNames = cell(1, obj.nCams);
             for i = 1:numel(defaultCameraNames)
@@ -1205,12 +1214,18 @@ classdef Label3D < Animator
             validCameraNames = @(X) iscell(X) && (numel(X) == obj.nCams);
             validFrames = @(X) isnumeric(X) && (numel(X) == obj.nFrames);
             defaultSaveFolder = '';
+            
+            defaultAcceptInit = 2; %YIWEN
+            validAcceptInit = @(X) X==1 || X==2; % isnumeric(X)
+            
             p = inputParser;
             addParameter(p,'basePath',defaultBasePath,validBasePath);
             addParameter(p,'cameraNames',defaultCameraNames,validCameraNames);
             addParameter(p,'framesToLabel',defaultFramesToLabel,validFrames);
             addParameter(p,'saveFolder',defaultSaveFolder,validBasePath);
-           
+            % YIWEN
+            addParameter(p,'acceptInit',defaultAcceptInit,validAcceptInit);
+            
             parse(p,varargin{:});
             p = p.Results;
             if isempty(p.framesToLabel)
@@ -1237,7 +1252,11 @@ classdef Label3D < Animator
             end
             
             % Save the state and use the data for export
-            obj.saveState;
+            if p.acceptInit == 1
+                obj.saveState(1)
+            else
+                obj.saveState;
+            end
             p.file = obj.savePath;
             labels = load(p.file);
             
@@ -1337,7 +1356,7 @@ classdef Label3D < Animator
             
             pts3d = cellfun(@(X) load(X, 'data_3D'), files);
             pts3d = cat(1, pts3d.data_3D);
-            stats = cellfun(@(X) load(X, 'status'), files);
+            stats = cellfun(@(X) load(X, ''), files);
             stats = cat(3, stats.status);
             
             data = cellfun(@(X) load(X, 'camParams', 'skeleton'), files);
