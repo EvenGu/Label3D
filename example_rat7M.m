@@ -36,6 +36,7 @@ danncePath = 'C:\Users\g2121\Projects\Label3D';
 
 % projectFolder = fullfile(danncePath,'s1-d1');
 projectFolder = 'C:\Users\g2121\Projects\MoCap\s1-d1';
+addpath(projectFolder);
 % calibPaths = collectCalibrationPaths(projectFolder);
 % params = cellfun(@(X) {load(X)}, calibPaths);
 

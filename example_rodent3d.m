@@ -30,13 +30,12 @@ clear all
 close all;
 addpath(genpath('deps'))
 addpath(genpath('skeletons'))
-danncePath = '/research/yiweng/DANNCE/dannce';
-
-%% Load in the calibration parameter data
-% projectFolder = fullfile(danncePath,'demo/markerless_mouse_1');
-projectFolder = fullfile(danncePath,'00_Rodent/2022-03-10');
-calibPaths = collectCalibrationPaths(projectFolder);
-params = cellfun(@(X) {load(X)}, calibPaths);
+% TODO
+% path to data
+dataPath = 'C:\Users\g2121\Projects\DATA\Rodent3D'; 
+% Load in the calibration parameter data
+calibPaths = 'C:\Users\g2121\Projects\DATA\Rodent3D\2022-05-11_camera_params_man1.mat'; 
+params = load(calibPaths);
 
 %% Load the videos into memory
 vidName = '0.mp4';
@@ -53,7 +52,7 @@ if isempty(sync)
     params = dannce.params;
 end
 
-framesToLabel = 1:100; % This needs to be same 
+framesToLabel = 1:50; % This needs to be same 
 for nVid = 1:numel(vidPaths)
     frameInds = sync{nVid}.data_frame(framesToLabel);
     videos{nVid} = readFrames(vidPaths{nVid}, frameInds+1);
