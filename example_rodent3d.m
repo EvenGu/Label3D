@@ -30,42 +30,41 @@ clear all
 close all;
 addpath(genpath('deps'))
 addpath(genpath('skeletons'))
-% TODO
-% path to data
-dataPath = 'C:\Users\g2121\Projects\DATA\Rodent3D'; 
-% Load in the calibration parameter data
-calibPaths = 'C:\Users\g2121\Projects\DATA\Rodent3D\2022-05-11_camera_params_man1.mat'; 
-params = load(calibPaths);
-
+% TODO: load data
+% projectFolder = 'C:\Users\g2121\Projects\DATA\Rodent3D'; 
+% calibFile = 'C:\Users\g2121\Projects\DATA\Rodent3D\2022-05-11_camera_params_man1.mat'; 
+projectFolder = '../dannce/00_Rodent/2022-05-18';
+calibFile = '../dannce/00_Rodent/2022-05-18/2022-05-11_camera_params_fromcp.mat';
+params = load(calibFile);
+numCams = 6;
 %% Load the videos into memory
 vidName = '0.mp4';
 vidPaths = collectVideoPaths(projectFolder,vidName);
-videos = cell(6,1);
+videos = cell(numCams,1);
 sync = collectSyncPaths(projectFolder, '*.mat');
 sync = cellfun(@(X) {load(X)}, sync);
-
-% In case the demo folder uses the dannce.mat data format. 
-if isempty(sync)
-    dannce_file = dir(fullfile(projectFolder, '*dannce.mat'));
-    dannce = load(fullfile(dannce_file(1).folder, dannce_file(1).name));
-    sync = dannce.sync;
-    params = dannce.params;
-end
 
 framesToLabel = 1:50; % This needs to be same 
 for nVid = 1:numel(vidPaths)
     frameInds = sync{nVid}.data_frame(framesToLabel);
     videos{nVid} = readFrames(vidPaths{nVid}, frameInds+1);
+%     try
+%         videos{nVid} = readFrames(vidPaths{nVid}, frameInds+1);
+%     catch ME
+%         disp(ME)
+%         v = VideoReader(vidPaths{nVid});
+%         videos{nVid} = read(v, frameInds+1);
+%     end
 end
 
 %% Get the skeleton
-skeleton = load('skeletons/mouse22_skeleton');
+skeleton = load('skeletons/rodent3d_12_skeleton');
 % skeleton = load('com');
 
 %% Start Label3D
 close all
-labelGui = Label3D(params, videos, skeleton);
-% labelGui = Label3D(params, videos, skeleton, 'sync', sync, 'framesToLabel', framesToLabel);
+% labelGui = Label3D(params, videos, skeleton);
+labelGui = Label3D(params, videos, skeleton, 'sync', sync, 'framesToLabel', framesToLabel);
 
 %% Check the camera positions
 labelGui.plotCameras       
