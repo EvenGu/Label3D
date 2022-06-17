@@ -4,12 +4,12 @@ Label3D is a GUI for the manual labeling of 3D keypoints in multiple cameras.
 ![Label3D Animation] <(common/label3dAnimation.gif)>
 
 ## Camera Code for Rodent3D dataset
---Camera1: blue (D415 137322076445)
---Camera2: pink (D415 137322076528)
---Camera3: yellow (D415 138422073715)
---Camera4: orange
---Camera5: green
---Camera6: red
+- Camera1: blue (D415 137322076445)
+- Camera2: pink (D415 137322076528)
+- Camera3: yellow (D415 138422073715)
+- Camera4: orange
+- Camera5: green
+- Camera6: red
 
 
 ## Installation
