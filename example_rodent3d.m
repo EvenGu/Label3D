@@ -54,7 +54,8 @@ videos = cell(numCams,1);
 sync = collectSyncPaths(projectFolder, '*.mat');
 sync = cellfun(@(X) {load(X)}, sync);
 
-framesToLabel = 1:50; % This needs to be same 
+% TODO: change this everytime
+framesToLabel = 300:900; % This needs to be same 
 for nVid = 1:numel(vidPaths)
     frameInds = sync{nVid}.data_frame(framesToLabel);
     videos{nVid} = readFrames(vidPaths{nVid}, frameInds+1);
