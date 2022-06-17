@@ -1194,7 +1194,7 @@ classdef Label3D < Animator
             % file - Path to .mat Label3D save file (with or without videos)
             % saveFolder - Folder in which to save dannce.mat file
             % cameraNames - cell array of camera names (in order)
-            %         Default: {'Camera1', 'Camera2', etc.}
+            %       Default: {'Camera1', 'Camera2', etc.}
             % framesToLabel - Vector of frame numbers for each video frame.
             % Syntax: labelGui.exportDannce
             %         labelGui.exportDannce('basePath', path)
@@ -1204,6 +1204,7 @@ classdef Label3D < Animator
             % 
             % To accept all initialized 3d points:
             %         labelGui.exportDannce('acceptInit', acceptInit)
+
             defaultBasePath = '';
             defaultCameraNames = cell(1, obj.nCams);
             for i = 1:numel(defaultCameraNames)
@@ -1257,6 +1258,8 @@ classdef Label3D < Animator
             else
                 obj.saveState;
             end
+            obj.saveState;
+% >>>>>>> master
             p.file = obj.savePath;
             labels = load(p.file);
             
