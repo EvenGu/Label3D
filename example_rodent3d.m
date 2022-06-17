@@ -35,18 +35,20 @@ addpath(genpath('skeletons'))
 % calibFile = 'C:\Users\g2121\Projects\DATA\Rodent3D\2022-05-11_camera_params_man1.mat'; 
 projectFolder = 'C:\Users\g2121\Projects\dannce\00_Rodent\2022-05-18';
 addpath(projectFolder);
-calibFile = '2022-05-11_camera_params_fromcp.mat';
-% construct params
-load(calibFile);
-numCams = 6;
-params = cell(numCams,1);
-for i = 1:numCams
-    params{i}.r = rotationMatrix{i};
-    params{i}.t = translationVector{i};
-    params{i}.K = params_individual{i}.IntrinsicMatrix;
-    params{i}.RDistort = params_individual{i}.RadialDistortion;
-    params{i}.TDistort = params_individual{i}.TangentialDistortion;
-end
+% calibFile = '2022-05-11_camera_params_fromcp.mat';
+% % construct params
+% load(calibFile);
+% numCams = 6;
+% params = cell(numCams,1);
+% for i = 1:numCams
+%     params{i}.r = rotationMatrix{i};
+%     params{i}.t = translationVector{i};
+%     params{i}.K = params_individual{i}.IntrinsicMatrix;
+%     params{i}.RDistort = params_individual{i}.RadialDistortion;
+%     params{i}.TDistort = params_individual{i}.TangentialDistortion;
+% end
+% save([projectFolder filesep 'params']);
+load([projectFolder filesep 'params']);
 %% Load the videos into memory
 vidName = '0.mp4';
 vidPaths = collectVideoPaths(projectFolder,vidName);
@@ -55,17 +57,20 @@ sync = collectSyncPaths(projectFolder, '*.mat');
 sync = cellfun(@(X) {load(X)}, sync);
 
 % TODO: change this everytime
-framesToLabel = 300:900; % This needs to be same 
+% framesToLabel = 300:360;
+startFrame = 300;
+endFrame = 360;
+framesToLabel = [startFrame+1:endFrame+1];
 for nVid = 1:numel(vidPaths)
-    frameInds = sync{nVid}.data_frame(framesToLabel);
-    videos{nVid} = readFrames(vidPaths{nVid}, frameInds+1);
-%     try
-%         videos{nVid} = readFrames(vidPaths{nVid}, frameInds+1);
-%     catch ME
+%     frameInds = sync{nVid}.data_frame(framesToLabel);
+%     videos{nVid} = readFrames(vidPaths{nVid}, frameInds+1);
+    try
+        videos{nVid} = readFrames(vidPaths{nVid}, frameInds+1);
+    catch ME
 %         disp(ME)
-%         v = VideoReader(vidPaths{nVid});
-%         videos{nVid} = read(v, frameInds+1);
-%     end
+        v = VideoReader(vidPaths{nVid});
+        videos{nVid} = read(v, framesToLabel);
+    end
 end
 
 %% Get the skeleton

@@ -30,6 +30,7 @@ git clone  --recurse-submodules https://github.com/Even/Label3D.git
 
 ## Usage
 Requires `Matlab 2019b`, `Matlab 2020a`, or `Matlab 2020b`
+Also Compatible with `Matlab 2022a`
 
 Label3D takes a cell arrays of structs of camera parameters as in
 https://github.com/spoonsso/DANNCE, a cell array of corresponding videos (h,w,c,N),
